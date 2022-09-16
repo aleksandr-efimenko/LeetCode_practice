@@ -4,21 +4,19 @@ from typing import List
 
 def maximumScore(nums: List[int], multipliers: List[int]) -> int:
     # COPIED FROM SOLUTION
-    m = len(multipliers)
-    n = len(nums)
 
-    memo = {}
+        m = len(multipliers)
+        n = len(nums)
 
-    def dp(op, left):
-        if op == m:
-            return 0
-        if (op, left) in memo:
-            return memo[(op, left)]
+        dp = [0] * (m + 1)
 
-        l = nums[left] * multipliers[op] + dp(op + 1, left + 1)
-        r = nums[(n-1)-(op-left)] * multipliers[op] + dp(op+1, left)
+        for op in range(m - 1, -1, -1):
+            next_row = dp.copy()
+            # Present Row is now next_Row because we are moving upwards
 
-        memo[(op, left)] = max(l, r)
+            for left in range(op, -1, -1):
 
-        return  memo[(op, left)]
-    return dp(0, 0)
+                dp[left] = max(multipliers[op] * nums[left] + next_row[left + 1],
+                               multipliers[op] * nums[n - 1 - (op - left)] + next_row[left])
+
+        return dp[0]
