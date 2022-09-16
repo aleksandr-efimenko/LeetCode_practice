@@ -5,18 +5,17 @@ from typing import List
 def maximumScore(nums: List[int], multipliers: List[int]) -> int:
     # COPIED FROM SOLUTION
 
-        m = len(multipliers)
-        n = len(nums)
+    # Number of Operations
+    m = len(multipliers)
 
-        dp = [0] * (m + 1)
+    def helper(nums, op):
+        if op == m:
+            return 0
 
-        for op in range(m - 1, -1, -1):
-            next_row = dp.copy()
-            # Present Row is now next_Row because we are moving upwards
+        # Returning Maximum of Two
+        # In first parameter we have chosen nums[start], thus subproblem will be nums excluding nums[start]
+        # In second parameter we have chosen nums[end], thus subproblem will be nums excluding nums[end]
+        return max(nums[0] * multipliers[op] + helper(nums[1:], op + 1),
+                   nums[-1] * multipliers[op] + helper(nums[:-1], op + 1))
 
-            for left in range(op, -1, -1):
-
-                dp[left] = max(multipliers[op] * nums[left] + next_row[left + 1],
-                               multipliers[op] * nums[n - 1 - (op - left)] + next_row[left])
-
-        return dp[0]
+    return helper(nums, 0)
